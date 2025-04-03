@@ -1,24 +1,34 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState, useEffect } from 'react';
 
-function FetchData() {
-    const [records, setRecords] = useState([])
+function DataFetcher() {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    useEffect(()=>{
-        fetch('https://jsonplaceholder.typicode.com/users')
-        .then(response => response.json())
-        .then(data => setRecords( data))
-        .catch(err => console.log(err))
-    }, [])
+  useEffect(() => {
+    fetch('https://jsonplaceholder.typicode.com/posts')
+      .then(response => response.json())
+      .then(data => {
+        setData(data);
+        setLoading(false);
+      })
+      .catch(error => {
+        setError(error);
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <div>
-      <ul>
-        {records.map((list, index)=>(
-            <li key={index}>{list.id} {list.name}</li>
-        ))}
-      </ul>
+      {loading ? (
+        <p>Loading...</p>
+      ) : error ? (
+        <p>Error: {error.message}</p>
+      ) : (
+        <List items={data} />
+      )}
     </div>
-  )
+  );
 }
 
-export default FetchData
+export default DataFetcher;
